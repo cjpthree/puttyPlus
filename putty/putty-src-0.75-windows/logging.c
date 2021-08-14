@@ -48,8 +48,8 @@ static void logwrite(LogContext *ctx, ptrlen data)
         static int new_line_flag = 0;
         if (new_line_flag == 1) {
             char buf[32] = { 0 };
-            new_line_flag = 0;
             struct tm tm = ltime();
+            new_line_flag = 0;
             strftime(buf, 32, "%H:%M:%S ", &tm);
             fwrite(buf, 1, strlen(buf), ctx->lgfp);
         }
