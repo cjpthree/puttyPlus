@@ -32,7 +32,8 @@
 
 
 
-
+FAQ
+https://github.com/cjpthree/puttyPlus/wiki/FAQ
 
 
 
