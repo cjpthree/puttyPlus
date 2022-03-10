@@ -17,11 +17,11 @@
 
 点击"Server"--"Add server..."填写server配置。
 
-<img src="https://user-images.githubusercontent.com/7747428/126021422-f237a6c3-7714-48c7-8a46-4dc5b9fc7438.png" height="50%" width="50%" />
+<img src="https://user-images.githubusercontent.com/7747428/126021422-f237a6c3-7714-48c7-8a46-4dc5b9fc7438.png" height="70%" width="70%" />
 
 4、打开server
 
-<img src="https://user-images.githubusercontent.com/7747428/126021532-41004469-1570-48bb-9bac-7614105666e7.png" height="50%" width="50%" />
+<img src="https://user-images.githubusercontent.com/7747428/126021532-41004469-1570-48bb-9bac-7614105666e7.png" height="70%" width="70%" />
 
 5、设置保存日志
 
@@ -29,7 +29,7 @@
 
 点击"Run PuTTY Config"，导航到"Session"--"Logging"--"Session logging:"，选中"Printable output"。导航到"Session"，选中"Default Settings"，点击"Save"。
 
-<img src="https://user-images.githubusercontent.com/7747428/126021606-4cd60e2b-df02-46f4-b8a2-fb7a1c259d35.png" height="50%" width="50%" />
+<img src="https://user-images.githubusercontent.com/7747428/126021606-4cd60e2b-df02-46f4-b8a2-fb7a1c259d35.png" height="70%" width="70%" />
 
 ### FAQ
 https://github.com/cjpthree/puttyPlus/wiki/FAQ
