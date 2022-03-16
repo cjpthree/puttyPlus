@@ -2,28 +2,32 @@
 
 基于putty官方源码，添加时间戳，并通过mtputty管理多标签。
 
-### 编译
-
-用vs2019打开project windows/VS2019/putty.sln，点击”生成“--”生成解决方案“编译。
-
 ### 使用
-1、下载最新release版本软件
+1、获取putty软件
 
-下载地址 https://github.com/cjpthree/puttyPlus/releases/
+方式1：直接下载已编译好的最新release版本软件，下载地址 https://github.com/cjpthree/puttyPlus/releases/
 
-2、双击打开多标签页管理工具mtputty
+方式2：用vs2019打开project windows/VS2019/putty.sln，点击”生成“--”生成解决方案“编译，找到生成的putty.exe文件。
 
-3、添加server
+2、打开多标签页管理工具mtputty
+
+3、配置putty软件的路径
+
+点击"Tools"--"PuTTY location"，配置putty.exe的路径。
+
+![image](https://user-images.githubusercontent.com/7747428/158564236-968e46a1-29e9-496b-8014-d3f2d9080d00.png)
+
+4、添加server
 
 点击"Server"--"Add server..."填写server配置。
 
 <img src="https://user-images.githubusercontent.com/7747428/126021422-f237a6c3-7714-48c7-8a46-4dc5b9fc7438.png" height="70%" width="70%" />
 
-4、打开server
+5、打开server
 
 <img src="https://user-images.githubusercontent.com/7747428/126021532-41004469-1570-48bb-9bac-7614105666e7.png" height="70%" width="70%" />
 
-5、设置保存日志
+6、设置保存日志
 
 如果需要保存日志，如下设置：
 
