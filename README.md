@@ -33,7 +33,7 @@
 
 点击"Run PuTTY Config"，导航到"Session"--"Logging"--"Session logging:"，选中"Printable output"。导航到"Session"，选中"Default Settings"，点击"Save"。
 
-<img src="https://user-images.githubusercontent.com/7747428/126021606-4cd60e2b-df02-46f4-b8a2-fb7a1c259d35.png" height="70%" width="70%" />
+<img src="https://user-images.githubusercontent.com/7747428/196185760-86c5366b-8f6a-4865-a466-9ec4fba87c9f.png" height="70%" width="70%" />
 
 ### FAQ
 https://github.com/cjpthree/puttyPlus/wiki/FAQ
