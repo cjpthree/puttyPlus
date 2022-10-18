@@ -46,14 +46,14 @@ static void logwrite(LogContext *ctx, ptrlen data)
     } else if (ctx->state == L_OPEN) {
         /* add timestamp */
         static int new_line_flag = 0;
-        if (new_line_flag == 1) {
+        if (0 != new_line_flag) {
             char buf[32] = { 0 };
             new_line_flag = 0;
             struct tm tm = ltime();
-            strftime(buf, 32, "%Y-%m-%d %H:%M:%S ", &tm);
+            strftime(buf, sizeof(buf) / sizeof(buf[0]), "[%Y-%m-%d %H:%M:%S] ", &tm);
             fwrite(buf, 1, strlen(buf), ctx->lgfp);
         }
-        if ((memcmp(data.ptr, "\n", strlen("\n")) == 0) || strstr(data.ptr, "\n")) {
+        if (NULL != strstr(data.ptr, "\n")) {
             new_line_flag = 1;
         }
 
