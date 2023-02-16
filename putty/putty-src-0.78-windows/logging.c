@@ -10,6 +10,7 @@
 #include <assert.h>
 
 #include "putty.h"
+#include "free_lock_queue.h"
 
 /* log session to file stuff ... */
 struct LogContext {
@@ -22,8 +23,56 @@ struct LogContext {
     int logtype;                       /* cached out of conf */
 };
 
+typedef struct free_lock_queue_data_s
+{
+    const void* ptr;
+    size_t len;
+    free_lock_link_queue_node fqn;
+} free_lock_queue_data_t;
+
 static Filename *xlatlognam(Filename *s, char *hostname, int port,
                             struct tm *tm);
+
+void write_with_timestamp(LogContext* ctx, ptrlen data)
+{
+    static free_lock_link_queue fq = free_lock_link_queue_init(fq);
+
+    free_lock_queue_data_t* endata = malloc(sizeof(free_lock_queue_data_t));
+    if (NULL == endata) {
+        return;
+    }
+    endata->ptr = malloc(data.len);
+    if (NULL == endata->ptr) {
+        free(endata);
+        return;
+    }
+    memcpy(endata->ptr, data.ptr, data.len);
+    endata->len = data.len;
+    free_lock_link_queue_enqueue(&(endata->fqn), &fq);
+
+    if (NULL != strstr(data.ptr, "\n")) { // newline
+        char buf[32] = { 0 };
+        struct tm tm = ltime();
+        strftime(buf, sizeof(buf) / sizeof(buf[0]), "[%Y-%m-%d %H:%M:%S] ", &tm);
+        fwrite(buf, 1, strlen(buf), ctx->lgfp);
+
+        while (!free_lock_link_queue_is_empty(&fq)) {
+            free_lock_link_queue_node* pt;
+            free_lock_link_queue_dequeue(pt, &fq);
+            free_lock_queue_data_t* dedata = free_lock_slist_entry(pt, free_lock_queue_data_t, fqn);
+            if (memcmp(dedata->ptr, "\r", strlen("\r") != 0)) {
+                if (fwrite(dedata->ptr, 1, dedata->len, ctx->lgfp) < dedata->len) {
+                    logfclose(ctx);
+                    ctx->state = L_ERROR;
+                    lp_eventlog(ctx->lp, "Disabled writing session log "
+                        "due to error while writing");
+                }
+            }
+            free(dedata->ptr);
+            free(dedata);
+        }
+    }
+}
 
 /*
  * Internal wrapper function which must be called for _all_ output
@@ -45,12 +94,7 @@ static void logwrite(LogContext *ctx, ptrlen data)
         bufchain_add(&ctx->queue, data.ptr, data.len);
     } else if (ctx->state == L_OPEN) {
         assert(ctx->lgfp);
-        if (fwrite(data.ptr, 1, data.len, ctx->lgfp) < data.len) {
-            logfclose(ctx);
-            ctx->state = L_ERROR;
-            lp_eventlog(ctx->lp, "Disabled writing session log "
-                        "due to error while writing");
-        }
+        write_with_timestamp(ctx, data);
     }                                  /* else L_ERROR, so ignore the write */
 }
 
