@@ -1,28 +1,26 @@
 /**
- * Copyright(C) 2014. TRULY OPTO-ELECTRONICS LTD. All rights reserved.
- *
  * free_lock_slist.h
  * Original Author : cjpthree@126.com, 2014-7-3.
  *
  * Description
- * µ¥½øµ¥³öÃâËøÁ´±í£¬Ó¦ÓÃÓÚµ¥½øµ¥³öÃâËø¶ÓÁÐÍ¦ºÃ¡£
- * ¶ÔÓÚ´óÊý¾ÝÁ÷ÄÜÓÅ»¯ÐÔÄÜ¡£
+ * å•è¿›å•å‡ºå…é”é“¾è¡¨ï¼Œåº”ç”¨äºŽå•è¿›å•å‡ºå…é”é˜Ÿåˆ—æŒºå¥½ã€‚
+ * å¯¹äºŽå¤§æ•°æ®æµèƒ½ä¼˜åŒ–æ€§èƒ½ã€‚
  */
 
 #ifndef _FREE_LOCK_SLIST_H_
 #define _FREE_LOCK_SLIST_H_
 
 typedef struct free_lock_slist_node {
-    struct free_lock_slist_node *next; /* Ö¸ÏòºóÃæµÄentry */
+    struct free_lock_slist_node *next; /* æŒ‡å‘åŽé¢çš„entry */
 } free_lock_slist_node_t;
 
 typedef struct free_lock_slist_head_s {
-    struct free_lock_slist_node   *next;    /* ×ÜÊÇÖ¸ÏòµÚÒ»¸öentry */
-    struct free_lock_slist_node   *ptail;   /* ×ÜÊÇÖ¸Ïò×îºóÒ»¸öentry */
+    struct free_lock_slist_node   *next;    /* æ€»æ˜¯æŒ‡å‘ç¬¬ä¸€ä¸ªentry */
+    struct free_lock_slist_node   *ptail;   /* æ€»æ˜¯æŒ‡å‘æœ€åŽä¸€ä¸ªentry */
 } free_lock_slist_head_t;
 
 /**
- * ³õÊ¼»¯Á´±í
+ * åˆå§‹åŒ–é“¾è¡¨
  */
 #define FREE_LOCK_SLIST_HEAD_INIT(name) \
 { \
@@ -31,15 +29,15 @@ typedef struct free_lock_slist_head_s {
 }
 
 /**
- * ¶¨Òå²¢³õÊ¼»¯Á´±í
- * @name: Á´±íµÄ±êÊ¶·û
+ * å®šä¹‰å¹¶åˆå§‹åŒ–é“¾è¡¨
+ * @name: é“¾è¡¨çš„æ ‡è¯†ç¬¦
  */
 #define FREE_LOCK_SLIST_HEAD(name) \
     free_lock_slist_t (name) = FREE_LOCK_SLIST_INIT(name)
 
 /**
- * ³õÊ¼»¯Á´±í
- * @head: ÐèÒª³õÊ¼»¯µÄÁ´±í
+ * åˆå§‹åŒ–é“¾è¡¨
+ * @head: éœ€è¦åˆå§‹åŒ–çš„é“¾è¡¨
  */
 #define INIT_FREE_LOCK_SLIST(head) \
 do { \
@@ -48,44 +46,44 @@ do { \
 } while (0)
 
 /**
- * ³õÊ¼»¯entry
- * @node: ÐèÒª³õÊ¼»¯µÄentry
+ * åˆå§‹åŒ–entry
+ * @node: éœ€è¦åˆå§‹åŒ–çš„entry
  */
 #define INIT_FREE_LOCK_SLIST_NODE(s_node) \
     ((s_node)->next = (free_lock_slist_node_t *)(s_node))
 
 /**
- * ÅÐ¶ÏÊÇ·ñÎª¿ÕÁ´±í£¬¿ÕÁ´±íÖ»ÓÐÍ·½áµã
+ * åˆ¤æ–­æ˜¯å¦ä¸ºç©ºé“¾è¡¨ï¼Œç©ºé“¾è¡¨åªæœ‰å¤´ç»“ç‚¹
  * @head: the list to test.
  */
 #define free_lock_slist_empty(head) \
     ((head)->next == (free_lock_slist_node_t *)(head))
 
 /**
- * ÅÐ¶ÏÁ´±íÊÇ·ñÖ»ÓÐÒ»¸öentry
+ * åˆ¤æ–­é“¾è¡¨æ˜¯å¦åªæœ‰ä¸€ä¸ªentry
  * @head: the list to test.
  */
 #define free_lock_slist_is_singular(head) \
     ((head)->ptail == (head)->next)
 
 /**
- * »ñÈ¡Á´±í×îºóÒ»¸öentry
+ * èŽ·å–é“¾è¡¨æœ€åŽä¸€ä¸ªentry
  * @head: the list to test.
  */
 #define free_lock_slist_get_last(head) \
     ((head)->ptail)
 
 /**
- * »ñÈ¡Á´±íµÚÒ»¸öentry
+ * èŽ·å–é“¾è¡¨ç¬¬ä¸€ä¸ªentry
  * @head: the list to test.
  */
 #define free_lock_slist_get_first(head) \
     ((head)->next)
 
 /**
- * ÔÚentryºóÃæ²åÈëÒ»¸öÐÂµÄentry
- * @new_entry:  Òª²åÈëµÄentry
- * @prev_entry: Ç°ÃæÄÇ¸öentry
+ * åœ¨entryåŽé¢æ’å…¥ä¸€ä¸ªæ–°çš„entry
+ * @new_entry:  è¦æ’å…¥çš„entry
+ * @prev_entry: å‰é¢é‚£ä¸ªentry
  */
 #define __free_lock_slist_add(new_entry, prev_entry) \
 do { \
@@ -94,9 +92,9 @@ do { \
 } while (0)
 
 /**
- * Î²²å·¨²åÈëÐÂentry
+ * å°¾æ’æ³•æ’å…¥æ–°entry
  * @new_entry:  new entry to be added
- * @head:       Í·entry
+ * @head:       å¤´entry
  */
 #define free_lock_slist_add_tail(new_entry, head) \
 do { \
@@ -113,17 +111,17 @@ do { \
 } while (0)
 
 /**
- * ´ÓÁ´±íÉ¾³ýprev_entryºóÃæµÄentry
- * @prev_entry: ÐèÒªÉ¾³ýµÄentryµÄÇ°ÃæÄÇ¸öentry
+ * ä»Žé“¾è¡¨åˆ é™¤prev_entryåŽé¢çš„entry
+ * @prev_entry: éœ€è¦åˆ é™¤çš„entryçš„å‰é¢é‚£ä¸ªentry
  */
 #define __free_lock_slist_del(prev_entry) \
     ((prev_entry)->next = (prev_entry)->next->next)
 
 /**
- * É¾³ýÁ´±íµÄµÚÒ»¸öentry
- * @head: Á´±íÍ·entry
+ * åˆ é™¤é“¾è¡¨çš„ç¬¬ä¸€ä¸ªentry
+ * @head: é“¾è¡¨å¤´entry
  *
- * ÐÔÄÜºÃ£¬ÍÆ¼öÊ¹ÓÃ
+ * æ€§èƒ½å¥½ï¼ŒæŽ¨èä½¿ç”¨
  */
 #define free_lock_slist_del_head(head) \
 do { \
@@ -138,10 +136,10 @@ do { \
 } while (0)
 
 /**
- * »ñÈ¡°üº¬¸ÃentryµÄ½á¹¹ÌåÖ¸Õë
- * @entry:   °üº¬ÔÚ½á¹¹ÌåÖÐµÄentry
- * @type:    Òª»ñÈ¡µÄ½á¹¹ÌåµÄÀàÐÍ
- * @member:  entryÔÚ½á¹¹ÌåÖÐµÄ±êÊ¶·û
+ * èŽ·å–åŒ…å«è¯¥entryçš„ç»“æž„ä½“æŒ‡é’ˆ
+ * @entry:   åŒ…å«åœ¨ç»“æž„ä½“ä¸­çš„entry
+ * @type:    è¦èŽ·å–çš„ç»“æž„ä½“çš„ç±»åž‹
+ * @member:  entryåœ¨ç»“æž„ä½“ä¸­çš„æ ‡è¯†ç¬¦
  */
 #define free_lock_slist_entry(entry, type, member) \
     ((type *)((char *)(entry) - (unsigned long)(&((type *)0)->member)))
