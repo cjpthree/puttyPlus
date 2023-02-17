@@ -1,11 +1,8 @@
 /**
- * Copyright(C) 2014. TRULY OPTO-ELECTRONICS LTD. All rights reserved.
- *
  * free_lock_queue.h
  * Original Author : cjpthree@126.com, 2014-7-3.
  *
  * Description
- * 实现单进单出免锁链队
  */
 
 #ifndef _FREE_LOCK_QUEUE_H_
