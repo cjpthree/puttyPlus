@@ -37,14 +37,14 @@ static Filename *xlatlognam(Filename *s, char *hostname, int port,
 static void get_format_time_s(char* str_time, int len)
 {
     struct tm tm = ltime();
-    strftime(str_time, len, "[%Y/%m/%d %H:%M:%S] ", &tm);
+    strftime(str_time, len, "[%Y-%m-%d %H:%M:%S] ", &tm);
 }
 #else
 static void get_format_time_ms(char* str_time)
 {
     SYSTEMTIME sys;
     GetLocalTime(&sys);
-    sprintf(str_time, "[%04d/%02d/%02d %02d:%02d:%02d.%03ld] ",
+    sprintf(str_time, "[%04d-%02d-%02d %02d:%02d:%02d.%03ld] ",
         sys.wYear, sys.wMonth, sys.wDay, sys.wHour, sys.wMinute, sys.wSecond, sys.wMilliseconds);
 }
 #endif
