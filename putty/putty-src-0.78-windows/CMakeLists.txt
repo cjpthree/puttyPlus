@@ -5,7 +5,7 @@ include(cmake/setup.cmake)
 
 # Scan the docs directory first, so that when we start calling
 # installed_program(), we'll know if we have man pages available
-add_subdirectory(doc)
+#add_subdirectory(doc)
 
 add_compile_definitions(HAVE_CMAKE_H)
 

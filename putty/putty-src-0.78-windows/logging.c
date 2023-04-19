@@ -8,7 +8,6 @@
 
 #include <time.h>
 #include <assert.h>
-#include <windows.h>
 
 #include "putty.h"
 #include "free_lock_queue.h"
