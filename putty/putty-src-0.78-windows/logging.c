@@ -8,6 +8,7 @@
 
 #include <time.h>
 #include <assert.h>
+#include <windows.h>
 
 #include "putty.h"
 #include "free_lock_queue.h"
@@ -33,7 +34,23 @@ typedef struct free_lock_queue_data_s
 static Filename *xlatlognam(Filename *s, char *hostname, int port,
                             struct tm *tm);
 
-void write_with_timestamp(LogContext* ctx, ptrlen data)
+#if TIME_S
+static void get_format_time_s(char* str_time, int len)
+{
+    struct tm tm = ltime();
+    strftime(str_time, len, "[%Y/%m/%d %H:%M:%S] ", &tm);
+}
+#else
+static void get_format_time_ms(char* str_time)
+{
+    SYSTEMTIME sys;
+    GetLocalTime(&sys);
+    sprintf(str_time, "[%04d/%02d/%02d %02d:%02d:%02d.%03ld] ",
+        sys.wYear, sys.wMonth, sys.wDay, sys.wHour, sys.wMinute, sys.wSecond, sys.wMilliseconds);
+}
+#endif
+
+static void write_with_timestamp(LogContext* ctx, ptrlen data)
 {
     static free_lock_link_queue fq = free_lock_link_queue_init(fq);
 
@@ -51,10 +68,13 @@ void write_with_timestamp(LogContext* ctx, ptrlen data)
     free_lock_link_queue_enqueue(&(endata->fqn), &fq);
 
     if (NULL != strstr(data.ptr, "\n")) { // newline
-        char buf[32] = { 0 };
-        struct tm tm = ltime();
-        strftime(buf, sizeof(buf) / sizeof(buf[0]), "[%Y-%m-%d %H:%M:%S] ", &tm);
-        fwrite(buf, 1, strlen(buf), ctx->lgfp);
+        char str_time[32] = { 0 };
+#if TIME_S
+        get_format_time_s(str_time, sizeof(str_time) / sizeof(str_time[0]));
+#else
+        get_format_time_ms(str_time);
+#endif
+        fwrite(str_time, 1, strlen(str_time), ctx->lgfp);
 
         while (!free_lock_link_queue_is_empty(&fq)) {
             free_lock_link_queue_node* pt;
