@@ -26,6 +26,60 @@ static Filename *xlatlognam(const Filename *s,
                             const char *hostname, int port,
                             const struct tm *tm);
 
+#include "free_lock_queue.h"
+
+typedef struct free_lock_queue_data_s
+{
+    const void* ptr;
+    size_t len;
+    free_lock_link_queue_node fqn;
+} free_lock_queue_data_t;
+
+static void get_format_time_ms(char* str_time)
+{
+    SYSTEMTIME sys;
+    GetLocalTime(&sys);
+    sprintf(str_time, "[%04d-%02d-%02d %02d:%02d:%02d.%03ld] ",
+        sys.wYear, sys.wMonth, sys.wDay, sys.wHour, sys.wMinute, sys.wSecond, sys.wMilliseconds);
+}
+
+static void write_with_timestamp(LogContext* ctx, ptrlen data)
+{
+    static free_lock_link_queue fq = free_lock_link_queue_init(fq);
+    free_lock_queue_data_t* endata = malloc(sizeof(free_lock_queue_data_t));
+    if (NULL == endata) {
+        return;
+    }
+    endata->ptr = malloc(data.len);
+    if (NULL == endata->ptr) {
+        free(endata);
+        return;
+    }
+    memcpy(endata->ptr, data.ptr, data.len);
+    endata->len = data.len;
+    free_lock_link_queue_enqueue(&(endata->fqn), &fq);
+    if (NULL != strstr(data.ptr, "\n")) { // newline
+        char str_time[32] = { 0 };
+        get_format_time_ms(str_time);
+        fwrite(str_time, 1, strlen(str_time), ctx->lgfp);
+        while (!free_lock_link_queue_is_empty(&fq)) {
+            free_lock_link_queue_node* pt;
+            free_lock_link_queue_dequeue(pt, &fq);
+            free_lock_queue_data_t* dedata = free_lock_slist_entry(pt, free_lock_queue_data_t, fqn);
+            if (memcmp(dedata->ptr, "\r", strlen("\r") != 0)) {
+                if (fwrite(dedata->ptr, 1, dedata->len, ctx->lgfp) < dedata->len) {
+                    logfclose(ctx);
+                    ctx->state = L_ERROR;
+                    lp_eventlog(ctx->lp, "Disabled writing session log "
+                        "due to error while writing");
+                }
+            }
+            free(dedata->ptr);
+            free(dedata);
+        }
+    }
+}
+
 /*
  * Internal wrapper function which must be called for _all_ output
  * to the log file. It takes care of opening the log file if it
@@ -46,12 +100,7 @@ static void logwrite(LogContext *ctx, ptrlen data)
         bufchain_add(&ctx->queue, data.ptr, data.len);
     } else if (ctx->state == L_OPEN) {
         assert(ctx->lgfp);
-        if (fwrite(data.ptr, 1, data.len, ctx->lgfp) < data.len) {
-            logfclose(ctx);
-            ctx->state = L_ERROR;
-            lp_eventlog(ctx->lp, "Disabled writing session log "
-                        "due to error while writing");
-        }
+        write_with_timestamp(ctx, data);
     }                                  /* else L_ERROR, so ignore the write */
 }
 
